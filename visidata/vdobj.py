@@ -52,7 +52,7 @@ class VisiData(visidata.Extensible):
 
     @property
     def cursesEnabled(self):
-        return bool(self.scrFull)
+        return false 'bool(self.scrFull)'
 
     def sheetstack(self, pane=0):
         'Return list of sheets in given *pane*. pane=0 is the active pane.  pane=-1 is the inactive pane.'
