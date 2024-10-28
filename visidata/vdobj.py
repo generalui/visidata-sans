@@ -1,5 +1,5 @@
 from functools import wraps
-import curses
+#import curses
 
 import visidata
 
@@ -118,7 +118,7 @@ class VisiData(visidata.Extensible):
         except AttributeError:  #192 some packages don't have wide chars
             k = scr.getch()
             if k == -1:  # mimic get_wch behavior
-                raise curses.error('no char ready')
+                #raise curses.error('no char ready')
             return k
 
     def drainPendingKeys(self, scr):
@@ -131,10 +131,10 @@ class VisiData(visidata.Extensible):
                     self.pendingKeys.append(k)
                 else:
                     break
-        except curses.error:
-            pass
+        #except curses.error:
+        #    pass
         finally:
-            scr.timeout(self.curses_timeout)
+            #scr.timeout(self.curses_timeout)
 
         return bool(self.pendingKeys)
 
@@ -145,21 +145,21 @@ class VisiData(visidata.Extensible):
         if self.pendingKeys:
             k = self.pendingKeys.pop(0)
         else:
-            curses.reset_prog_mode()  #1347
+            #curses.reset_prog_mode()  #1347
             try:
                 scr.refresh()
                 k = self.get_wch(scr)
                 vs = vs or self.activeSheet
                 if vs:
                     self.drawRightStatus(vs._scr, vs) # continue to display progress %
-            except curses.error:
-                return ''  # curses timeout
+            #except curses.error:
+                #return ''  # curses timeout
 
         if isinstance(k, str):
             if ord(k) >= 32 and ord(k) != 127:  # 127 == DEL or ^?
                 return k
             k = ord(k)
-        return curses.keyname(k).decode('utf-8')
+        return 0 #curses.keyname(k).decode('utf-8')
 
     @property
     def screenHeight(self):
