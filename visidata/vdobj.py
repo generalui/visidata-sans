@@ -52,7 +52,7 @@ class VisiData(visidata.Extensible):
 
     @property
     def cursesEnabled(self):
-        return false
+        return False
 
     def sheetstack(self, pane=0):
         'Return list of sheets in given *pane*. pane=0 is the active pane.  pane=-1 is the inactive pane.'
@@ -117,7 +117,7 @@ class VisiData(visidata.Extensible):
             return scr.get_wch()
         except AttributeError:  #192 some packages don't have wide chars
             k = scr.getch()
-            if k == -1:  # mimic get_wch behavior
+            #if k == -1:  # mimic get_wch behavior
                 #raise curses.error('no char ready')
             return k
 
@@ -134,6 +134,7 @@ class VisiData(visidata.Extensible):
         #except curses.error:
         #    pass
         finally:
+            pass
             #scr.timeout(self.curses_timeout)
 
         return bool(self.pendingKeys)
@@ -152,7 +153,8 @@ class VisiData(visidata.Extensible):
                 vs = vs or self.activeSheet
                 if vs:
                     self.drawRightStatus(vs._scr, vs) # continue to display progress %
-            #except curses.error:
+            except curses.error:
+                pass
                 #return ''  # curses timeout
 
         if isinstance(k, str):

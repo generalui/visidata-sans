@@ -1,7 +1,7 @@
 import builtins
 import contextlib
 import os
-import curses
+#import curses
 import signal
 import threading
 import time
@@ -159,8 +159,8 @@ def mainloop(vd, scr):
     nonidle_timeout = vd.curses_timeout
 
     scr.timeout(vd.curses_timeout)
-    with contextlib.suppress(curses.error):
-        curses.curs_set(0)
+    #with contextlib.suppress(curses.error):
+    #    curses.curs_set(0)
 
     numTimeouts = 0
     prefixWaiting = False
@@ -274,28 +274,28 @@ def mainloop(vd, scr):
 def initCurses(vd):
     # reduce ESC timeout to 25ms. http://en.chys.info/2009/09/esdelay-ncurses/
     os.putenv('ESCDELAY', '25')
-    curses.use_env(True)
+    #curses.use_env(True)
 
-    scr = curses.initscr()
+    #scr = curses.initscr()
 
-    curses.start_color()
+    #curses.start_color()
 
-    colors.setup()
+    #colors.setup()
 
-    curses.noecho()
+    #curses.noecho()
 
-    curses.raw()    # get control keys instead of signals
-    curses.meta(1)  # allow "8-bit chars"
+    #curses.raw()    # get control keys instead of signals
+    #curses.meta(1)  # allow "8-bit chars"
 
     scr.keypad(1)
 
-    curses.def_prog_mode()
+    #curses.def_prog_mode()
 
     vd.drainPendingKeys(scr)
     if '\x1b' in vd.pendingKeys:  #1993
         # if start of an ANSI escape sequence, might be mangled, discard remaining keystrokes
         vd.pendingKeys.clear()
-        curses.flushinp()
+        #curses.flushinp()
 
     return scr
 
@@ -305,7 +305,7 @@ def wrapper(f, *args, **kwargs):
         scr = vd.initCurses()
         return f(scr, *args, **kwargs)
     finally:
-        curses.endwin()
+        pass #curses.endwin()
 
 
 @VisiData.global_api
@@ -320,13 +320,13 @@ def run(vd, *sheetlist):
 
         scr = vd.initCurses()
         ret = vd.mainloop(scr)
-    except curses.error as e:
-        if vd.options.debug:
-            raise
-        vd.fail(str(e))
+    #except curses.error as e:
+    #    if vd.options.debug:
+    #       raise
+    #   vd.fail(str(e))
     finally:
-        if scr:
-            curses.endwin()
+        #if scr:
+            pass #curses.endwin()
 
     vd.cancelThread(*[t for t in vd.unfinishedThreads if not t.name.startswith('save_')])
 

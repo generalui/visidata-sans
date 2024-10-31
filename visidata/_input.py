@@ -1,5 +1,5 @@
 from contextlib import suppress
-import curses
+#import curses
 
 import visidata
 
@@ -59,17 +59,17 @@ def acceptThenFunc(*longnames):
 
 class EnableCursor:
     def __enter__(self):
-        with suppress(curses.error):
-            curses.mousemask(0)
-            curses.curs_set(1)
+        pass # with suppress(curses.error):
+            #curses.mousemask(0)
+            #curses.curs_set(1)
 
     def __exit__(self, exc_type, exc_val, tb):
-        with suppress(curses.error):
-            curses.curs_set(0)
-            if vd.options.mouse_interval:
-                curses.mousemask(curses.MOUSE_ALL if hasattr(curses, "MOUSE_ALL") else 0xffffffff)
-            else:
-                curses.mousemask(0)
+        pass # with suppress(curses.error):
+            #curses.curs_set(0)
+            #if vd.options.mouse_interval:
+            #    curses.mousemask(curses.MOUSE_ALL if hasattr(curses, "MOUSE_ALL") else 0xffffffff)
+            #else:
+            #    curses.mousemask(0)
 
 
 def until_get_wch(scr):
@@ -78,7 +78,7 @@ def until_get_wch(scr):
     while not ret:
         try:
             ret = vd.get_wch(scr)
-        except curses.error:
+        finally: #except curses.error:
             pass
 
     if isinstance(ret, int):
@@ -372,7 +372,7 @@ def editText(vd, y, x, w, attr=ColorAttr(), value='',
 
         if vd.cursesEnabled:
             # clear keyboard buffer to neutralize multi-line pastes (issue#585)
-            curses.flushinp()
+            pass #curses.flushinp()
 
     if display:
         if record and vd.cmdlog:

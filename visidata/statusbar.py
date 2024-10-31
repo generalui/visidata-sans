@@ -4,7 +4,7 @@ Status messages get added with vd.{debug/aside/status/warning/fail/error}(), and
 
 import builtins
 import collections
-import curses
+#import curses
 import sys
 
 import visidata
@@ -248,7 +248,7 @@ def drawRightStatus(vd, scr, vs):
         statuslen = clipdraw(scr, vs.windowHeight-1, x, rstat, cattr, w=vs.windowWidth-1)
     finally:
         if scr:
-            curses.doupdate()
+            pass #curses.doupdate()
     return statuslen
 
 

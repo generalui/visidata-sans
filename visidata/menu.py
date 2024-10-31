@@ -1,7 +1,7 @@
 import string
 import textwrap
 import time
-import curses
+#import curses
 
 from typing import List, Union
 from visidata import vd, drawcache, colors, clipdraw, dispwidth

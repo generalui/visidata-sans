@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Visidata in Pyodide - Help Message</title>
+  <!-- Include Pyodide -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+    }
+    #output {
+      white-space: pre-wrap;
+      background-color: #f0f0f0;
+      padding: 15px;
+      border: 1px solid #ccc;
+      height: 400px;
+      overflow-y: auto;
+    }
+    #command-input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      font-family: monospace;
+    }
+    .console-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Visidata Console</h1>
+  <div class="console-container">
+    <div id="output"></div>
+    <input type="text" id="command-input" placeholder="Enter command..." />
+  </div>
+  <script>
+
+    async function main() {
+      // Clear any existing Pyodide instance
+      if (window.pyodide) {
+        delete window.pyodide;
+      }
+
+      const outputElement = document.getElementById('output');
+      outputElement.textContent = 'Loading Pyodide...\n';
+      
+      // Load fresh Pyodide instance
+      window.pyodide = await loadPyodide();
+      outputElement.textContent += 'Pyodide loaded.\n';
+
+      await setupEnvironment(window.pyodide, outputElement);
+    }
+
+    async function setupEnvironment(pyodide, outputElement) {
+      outputElement.textContent += 'Installing Visidata...\n';
+
+      await pyodide.loadPackage('micropip');
+
+      console.log('here')
+
+      try {
+        await pyodide.runPythonAsync(`
+          import micropip
+          await micropip.install("sqlite3")
+          await micropip.install('https://code.generalui.com/visidata-3.2.dev0-py3-none-any.whl')
+        `);
+        outputElement.textContent += 'Visidata installed successfully.\n';
+      } catch (error) {
+        outputElement.textContent += 'Error installing Visidata:\n' + error + '\n';
+        return;
+      }
+
+      await runVisidata(pyodide, outputElement);
+    }
+
+    async function runVisidata(pyodide, outputElement) {
+      // Function to handle output from Python
+      function appendOutput(text) {
+        outputElement.textContent += text;
+        // Scroll to bottom
+        outputElement.scrollTop = outputElement.scrollHeight;
+      }
+
+      // Expose the `appendOutput` function to Python
+      pyodide.globals.set('append_output', appendOutput);
+
+      // Redirect `sys.stdout` and `sys.stderr` to `append_output`
+      await pyodide.runPythonAsync(`
+        import sys
+        class OutputRedirector:
+            def __init__(self):
+                pass
+            def write(self, s):
+                append_output(s)
+            def flush(self):
+                pass
+        sys.stdout = OutputRedirector()
+        sys.stderr = OutputRedirector()
+      `);
+
+      // Set up visidata with modified sys.exit and os._exit
+      await pyodide.runPythonAsync(`
+        import visidata
+        import sys
+        import os
+        from visidata import main
+        
+        def _custom_exit(status=0):
+            if status != 0:
+                print(f"\\nProcess would have exited with status {status}")
+            return status
+            
+        sys.exit = _custom_exit
+        os._exit = _custom_exit
+        
+        def run_vd_command(cmdline):
+            saved_argv = sys.argv
+            try:
+                sys.argv = ['visidata'] + cmdline
+                main.vd_cli()
+            finally:
+                sys.argv = saved_argv
+      `);
+
+      // Add command input handling
+      const commandInput = document.getElementById('command-input');
+      commandInput.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter') {
+          const command = commandInput.value;
+          appendOutput(`\n> ${command}\n`);
+          
+          try {
+            const args = command.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
+            await pyodide.runPythonAsync(`
+              run_vd_command(${JSON.stringify(args)})
+            `);
+          } catch (error) {
+            appendOutput('\nError running command:\n' + error + '\n');
+          }
+          
+          commandInput.value = '';
+        }
+      });
+    }
+
+    // Make sure this runs when page loads
+    window.addEventListener('load', () => {
+      main().catch(console.error);
+    });
+
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import curses
+#import curses
 
 from visidata import vd, VisiData, BaseSheet, Sheet, AttrDict
 
@@ -13,14 +13,15 @@ BaseSheet.init('mouseY', int)
 
 @VisiData.after
 def initCurses(vd):
-    curses.MOUSE_ALL = 0xffffffff
-    curses.mousemask(curses.MOUSE_ALL if vd.options.mouse_interval else 0)
-    curses.mouseinterval(vd.options.mouse_interval)
-    curses.mouseEvents = {}
+    pass
+    #curses.MOUSE_ALL = 0xffffffff
+    #curses.mousemask(curses.MOUSE_ALL if vd.options.mouse_interval else 0)
+    #curses.mouseinterval(vd.options.mouse_interval)
+    #curses.mouseEvents = {}
 
-    for k in dir(curses):
-        if k.startswith('BUTTON') or k in ('REPORT_MOUSE_POSITION', '2097152'):
-            curses.mouseEvents[getattr(curses, k)] = k
+    #for k in dir(curses):
+    #    if k.startswith('BUTTON') or k in ('REPORT_MOUSE_POSITION', '2097152'):
+    #        curses.mouseEvents[getattr(curses, k)] = k
 
 
 @VisiData.after
@@ -46,31 +47,7 @@ def getMouse(vd, _x, _y, button):
 def parseMouse(vd, **kwargs):
     'Return list of mouse interactions (clicktype, y, x, name, scr) for curses screens given in kwargs as name:scr.'
 
-    devid, x, y, z, bstate = curses.getmouse()
-
-    clicktype = ''
-    if bstate & curses.BUTTON_CTRL:
-        clicktype += "Ctrl+"
-        bstate &= ~curses.BUTTON_CTRL
-    if bstate & curses.BUTTON_ALT:
-        clicktype += "Alt+"
-        bstate &= ~curses.BUTTON_ALT
-    if bstate & curses.BUTTON_SHIFT:
-        clicktype += "Shift+"
-        bstate &= ~curses.BUTTON_SHIFT
-
-    keystroke = clicktype + curses.mouseEvents.get(bstate, str(bstate))
-    ret = AttrDict(keystroke=keystroke, y=y, x=x, found=[])
-    for winname, winscr in kwargs.items():
-        if not winscr:
-            continue
-        px, py = vd.getrootxy(winscr)
-        mh, mw = winscr.getmaxyx()
-        if py <= y < py+mh and px <= x < px+mw:
-            ret.found.append(winname)
-#            vd.debug(f'{keystroke} at ({x-px}, {y-py}) in window {winname} {winscr}')
-
-    return ret
+    return 0
 
 
 @VisiData.api
@@ -104,7 +81,7 @@ def handleMouse(vd, sheet):
 
             vd.keystrokes = vd.prettykeys(r.keystroke)
             return ''  #  handled
-    except curses.error:
+    finally: #except curses.error:
         pass
 
     return r.keystroke if r else ''

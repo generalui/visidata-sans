@@ -6,7 +6,7 @@ import cProfile
 import threading
 import collections
 import subprocess
-import curses
+#import curses
 
 from visidata import VisiData, vd, options, globalCommand, Sheet, EscapeException
 from visidata import ColumnAttr, Column, BaseSheet, ItemColumn
@@ -139,7 +139,7 @@ def checkMemoryUsage(vd):
         attr = '[:warning]'
         vd.warning(f'{free_m}MB free < {min_mem}MB minimum, stopping threads')
         vd.cancelThread(*vd.unfinishedThreads)
-        curses.flash()
+        #curses.flash()
     else:
         attr = '[:working]'
     return attr + ret + '[/]'

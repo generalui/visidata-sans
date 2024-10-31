@@ -1,4 +1,4 @@
-import curses
+#import curses
 from visidata import VisiData, colors, Sheet, Column, ItemColumn, RowColorizer, wrapply, BaseSheet
 
 

@@ -1,0 +1,10 @@
+{
+    "fileAccess": {
+        "rules": [
+            {
+                "pattern": "**/*",
+                "allowed": true
+            }
+        ]
+    }
+}

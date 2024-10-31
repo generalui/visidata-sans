@@ -3,7 +3,7 @@ import sys
 import signal
 import subprocess
 import tempfile
-import curses
+#import curses
 
 import visidata
 
@@ -13,15 +13,17 @@ class SuspendCurses:
     'Context manager to leave windowed mode on enter and restore it on exit.'
     def __enter__(self):
         if visidata.vd.scrFull:
-            curses.endwin()
+            #curses.endwin()
+            pass
         if visidata.vd.tstp_signal:
-            signal.signal(signal.SIGTSTP, visidata.vd.tstp_signal)
+            #signal.signal(signal.SIGTSTP, visidata.vd.tstp_signal)
+            pass
 
     def __exit__(self, exc_type, exc_val, tb):
         if visidata.vd.scrFull:
-            curses.reset_prog_mode()
+            pass # curses.reset_prog_mode()
             visidata.vd.scrFull.refresh()
-            curses.doupdate()
+            pass #curses.doupdate()
 
 
 @visidata.VisiData.api

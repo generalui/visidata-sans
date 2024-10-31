@@ -1,5 +1,5 @@
 from visidata import vd, BaseSheet, ENTER, colors, dispwidth
-import curses
+#import curses
 
 
 def boundingBox(rows):

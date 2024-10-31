@@ -148,7 +148,7 @@ def importFeatures():
     vd.importModule('string', 'ascii_letters ascii_lowercase ascii_uppercase digits hexdigits punctuation printable whitespace'.split())
     vd.importModule('json')
     vd.importModule('itertools')
-    vd.importModule('curses')
+#    vd.importModule('curses')
 
     import visidata.experimental  # import nothing by default but make package accessible
 

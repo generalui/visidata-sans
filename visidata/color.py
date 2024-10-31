@@ -1,4 +1,4 @@
-import curses
+#import curses
 import functools
 from copy import copy
 from collections import namedtuple
@@ -86,14 +86,14 @@ class ColorMaker:
 
     def setup(self):
         try:
-            curses.use_default_colors()
+            pass #curses.use_default_colors()
         except Exception as e:
             pass
 
     @drawcache_property
     def colors(self):
         'not computed until curses color has been initialized'
-        return {x[6:]:getattr(curses, x) for x in dir(curses) if x.startswith('COLOR_') and x != 'COLOR_PAIRS'}
+        return 0 # {x[6:]:getattr(curses, x) for x in dir(curses) if x.startswith('COLOR_') and x != 'COLOR_PAIRS'}
 
     def __getitem__(self, colorname:str) -> ColorAttr:
         'colors["green"] or colors["foo"] returns parsed ColorAttr.'
@@ -138,9 +138,9 @@ class ColorMaker:
                 i = 1
                 continue
 
-            if hasattr(curses, 'A_' + x.upper()):
-                fgbgattrs[2].append(x)
-            else:
+            #if hasattr(curses, 'A_' + x.upper()):
+            #    fgbgattrs[2].append(x)
+            #else:
                 if not fgbgattrs[i]:  # keep first known color
                     if self._get_colornum(x) is not None:   # only set known colors
                         fgbgattrs[i] = x
@@ -170,23 +170,23 @@ class ColorMaker:
             return None
 
         try: # test to see if color is available
-            curses.init_pair(255, r, 0)
+            #curses.init_pair(255, r, 0)
             self.color_cache[colorname] = r
             return r
-        except curses.error as e:
-            return None  # not available
+        #except curses.error as e:
+         #   return None  # not available
         except ValueError:  # Python 3.10+  issue #1227
             return None
 
     def _attrnames_to_num(self, attrnames:'list[str]') -> int:
         attrs = 0
-        for attr in attrnames:
-            attrs |= getattr(curses, 'A_'+attr.upper())
+        #for attr in attrnames:
+            #attrs |= getattr(curses, 'A_'+attr.upper())
         return attrs
 
     @drawcache_property
     def _attrs(self):
-        return {k[2:].lower():getattr(curses, k) for k in dir(curses) if k.startswith('A_') and k != 'A_ATTRIBUTES'}
+        return 0 #{k[2:].lower():getattr(curses, k) for k in dir(curses) if k.startswith('A_') and k != 'A_ATTRIBUTES'}
 
     @drawcache
     def _colornames_to_cattr(self, colorname:str, precedence=0) -> ColorAttr:
@@ -207,13 +207,13 @@ class ColorMaker:
                 pairnum = len(self.color_pairs)+1
                 if fg is None: fg = -1
                 if bg is None: bg = -1
-                try:
-                    curses.init_pair(pairnum, fg, bg)
-                except curses.error as e:
-                    return 0  # do not cache
+                #try:
+                #    curses.init_pair(pairnum, fg, bg)
+                #except curses.error as e:
+                #    return 0  # do not cache
                 self.color_pairs[(fg, bg)] = (pairnum, colorname)
 
-            return curses.color_pair(pairnum)
+            return 0#curses.color_pair(pairnum)
 
 
 colors = ColorMaker()
